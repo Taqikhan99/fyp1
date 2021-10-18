@@ -7,3 +7,8 @@
   1. Often Student wants to know in which area a particular teacher is at the moment to ask some questions.
   2. If I want to know the exact location of a doctor, it can be used in hospitals
   
+#Technologies we are using:
+1. Tensorflow
+2. opencv
+3. python
+4. jupyter lab
