@@ -28,12 +28,12 @@ def generateDataset(img, userid,img_id):
 
     # convert to gray and resize before saving
     gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    gray=cv2.resize(gray,(100,100))
+    gray=cv2.resize(gray,(200,200))
 
     # writing images in the user folder
     savingPath="data/user_"+str(userid)+"/user_"+str(userid)+"."+str(img_id)+".jpg"
     cv2.imwrite(savingPath,gray)
-    print("Images recorded successfully!")z
+    print("Images recorded successfully!")
 
 
     
@@ -77,9 +77,9 @@ def recocgnize(img,clf,classifier,scaleFactor,minNeighbour,color):
             print(id)
             match=True
             cv2.putText(img,"Ammad",(x+2,y-5),cv2.FONT_HERSHEY_COMPLEX,0.8,color,1,cv2.LINE_AA)
-        elif id==3:
-            match=True
-            cv2.putText(img,"Afridi",(x+2,y-5),cv2.FONT_HERSHEY_COMPLEX,0.8,color,1,cv2.LINE_AA)
+        # elif id==3:
+        #     match=True
+        #     cv2.putText(img,"Afridi",(x+2,y-5),cv2.FONT_HERSHEY_COMPLEX,0.8,color,1,cv2.LINE_AA)
 
         #label rectangle
         # cv2.putText(img,txt,(x+3,y-3),cv2.FONT_HERSHEY_PLAIN,0.9,color,1,cv2.LINE_AA)
@@ -91,32 +91,33 @@ def recocgnize(img,clf,classifier,scaleFactor,minNeighbour,color):
 
 # method to detect face
 def detectFace(img,faceClassifier,img_id,clf):
-    # Rimg,match=recocgnize(img,clf,faceCascade,1.1,6,(185,200,120))
+    Rimg,match=recocgnize(img,clf,faceCascade,1.1,6,(185,200,120))
     
-    # if (not match):
-    coordinates,img= drawBoundary(img,faceClassifier,1.1,6,(105,250,10),'My Face')
-    print(len(coordinates))
-    if (len(coordinates)==4):
-        roi_img=img[coordinates[1]:coordinates[1]+coordinates[3],coordinates[0]:coordinates[0]+coordinates[2]]
-        print(roi_img)
-        user_id=personIds[-1]+1
-        generateDataset(roi_img,user_id,img_id)
-        try:
+    if (not match):
+        coordinates,img= drawBoundary(img,faceClassifier,1.1,6,(105,250,10),'My Face')
+        print(len(coordinates))
+        if (len(coordinates)==4):
+            roi_img=img[coordinates[1]:coordinates[1]+coordinates[3],coordinates[0]:coordinates[0]+coordinates[2]]
+            print(roi_img)
+            user_id=personIds[-1]+1
+            generateDataset(roi_img,user_id,img_id)
+            # try:
 
-            cursor.execute('''
-                    INSERT INTO tbPerson (personId, pName, imagesPath)
-                    VALUES
-                    (?,'unknown',?)
-                    
-                    ''',user_id,'data/user_'+str(user_id))
-            cursor.commit()
-            cursor.close()
-            print('Saved to database')
-        except:
-            print('Already saved for this user')
+            #     cursor.execute('''
+            #             INSERT INTO tbPerson (personId, pName, imagesPath)
+            #             VALUES
+            #             (?,'unknown',?)
+                        
+            #             ''',user_id,'data/user_'+str(user_id))
+            #     cursor.commit()
+            #     cursor.close()
+            #     print('Saved to database')
+            # except:
+            #     print('Already saved for this user')
+            
+    else:
+        print("Match found!")
         
-    # else:
-    #     print("Match found!")
             
     return img
 

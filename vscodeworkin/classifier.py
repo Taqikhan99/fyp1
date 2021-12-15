@@ -5,50 +5,42 @@ import cv2
 
 
 def trainClassifier(data_dir):
-    # path = [os.path.join(data_dir,f) for f in os.listdir(data_dir)]
-    # subfolders = [ f.path for f in os.scandir(data_dir) if f.is_dir() ]
-    # print(subfolders)
-    
-
-    # ids=np.array(ids)
-
-    
 
     usernames=[]
     paths=[]
 
-    # getting subfolders in data folder
-    for users in os.listdir(data_dir):
-        usernames.append(users)
-        print(usernames)
+    for root,dirs,files in os.walk(data_dir):
+        for file in files:
+            if file.endswith("png") or file.endswith("jpg"):
+                path=os.path.join(root,file)
+                label=os.path.basename(root).replace(" ","-").lower()
+                # print(label,path)
+                paths.append(path)
+                pilImage=Image.open(path).convert("L") #convert to grayscale
+                imageArray= np.array(pilImage,'uint8')
 
-    for user in usernames:
-        for image in os.listdir(data_dir+"\{}".format(user)):
-            path_image=os.path.join(data_dir+"\{}".format(user),image)
-
-            # data/user_id/image
-            paths.append(path_image)
-
-    print(paths)
+     
     faces=[]
     ids=[]
 
 
     for imagepath in paths:
+        print(imagepath)
         img=Image.open (imagepath)
         imageNp=np.array(img,'uint8')
         # extracting user id from file path
         id=int(imagepath.split("\\")[2].split("_")[1].split(".")[0])
-        print(id)
         faces.append(imageNp)
         ids.append(id)
     
     ids=np.array(ids)
-
+    # print(faces)
+    # print(ids)
     clf=cv2.face.LBPHFaceRecognizer_create()
     clf.train(faces,ids)
     clf.write("classifier.yml")
+    print("Training successful!")    
 
 
-trainClassifier("data")
+trainClassifier("images")
 
